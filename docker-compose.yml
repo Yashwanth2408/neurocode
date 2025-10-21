@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  neurocode:
+    build: .
+    container_name: neurocode-scanner
+    ports:
+      - "8000:8000"    # NeuroCode API
+      - "11434:11434"  # Ollama API
+    environment:
+      # GitHub Integration (set these in .env file)
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
+      
+      # GitLab Integration (optional)
+      - GITLAB_TOKEN=${GITLAB_TOKEN}
+      - GITLAB_URL=${GITLAB_URL:-https://gitlab.com}
+      - GITLAB_WEBHOOK_SECRET=${GITLAB_WEBHOOK_SECRET}
+      
+      # Scanner Settings
+      - ENABLE_SEMGREP=${ENABLE_SEMGREP:-true}
+      - ENABLE_BANDIT=${ENABLE_BANDIT:-true}
+      - ENABLE_CODELLAMA=${ENABLE_CODELLAMA:-true}
+      
+    volumes:
+      # Persist Ollama models
+      - ollama_models:/root/.ollama
+      
+      # Mount .env file (optional)
+      - ./.env:/app/.env:ro
+      
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  ollama_models:
+    driver: local

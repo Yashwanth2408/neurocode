@@ -1,0 +1,4 @@
+{
+  "code": "import os\nuser_input = input('Enter command: ')\nos.system(user_input)\nexec(request.data)\nquery = 'SELECT * FROM users WHERE id = ' + user_id",
+  "language": "python"
+}
