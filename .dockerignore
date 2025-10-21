@@ -26,13 +26,6 @@ htmlcov/
 # Environment
 .env
 
-# Documentation (not needed in container)
-README.md
-
-# Test files (optional - remove if you want tests in container)
-test_*.py
-test_*.json
-
 # Temporary files
 temp_scan.*
 *.log
