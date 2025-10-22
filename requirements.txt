@@ -3,7 +3,9 @@ uvicorn[standard]==0.24.0
 requests==2.31.0
 PyGithub==2.1.1
 python-dotenv==1.0.0
-semgrep==1.45.0
-bandit==1.7.5
 python-multipart==0.0.6
 aiofiles==23.2.1
+
+# Security scanners
+semgrep>=1.45.0
+bandit[toml]>=1.7.5

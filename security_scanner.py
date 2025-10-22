@@ -62,11 +62,11 @@ class SecurityScanner:
             temp_file.write_text(code)
         
             # Run Semgrep with comprehensive security rules
+            # Run Semgrep with comprehensive security rules
             result = subprocess.run(
                 [
                     "semgrep",
-                    "--config", "p/security-audit",
-                    "--config", "p/owasp-top-ten",
+                    "--config=auto",  # Use auto-detection
                     "--json",
                     str(temp_file)
                 ],
@@ -74,6 +74,7 @@ class SecurityScanner:
                 text=True,
                 timeout=60
             )
+
         
             temp_file.unlink()
         
