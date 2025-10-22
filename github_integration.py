@@ -7,7 +7,7 @@ class GitHubIntegration:
     """Handle GitHub API operations for PR reviews"""
     
     def __init__(self, token: Optional[str] = None):
-        config = get_config()
+        config = config()
         self.token = token or config.github_token
         
         if not self.token:
