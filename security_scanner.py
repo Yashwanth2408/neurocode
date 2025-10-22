@@ -1,6 +1,10 @@
 import subprocess
 import json
-import ollama
+try:
+    import ollama
+except ImportError:
+    ollama = None 
+    
 from pathlib import Path
 from typing import Dict, List, Any
 from config import config
@@ -17,9 +21,9 @@ class SecurityScanner:
         # Check if Ollama is available
         self.ai_available = False
         try:
-            ollama.list()
-            self.ai_available = True
-            self.ollama_model = "codellama:7b-instruct"
+            if ollama:
+                ollama.list()
+                self.ai_available = True
         except Exception as e:
             print(f"⚠️  Ollama not available: {e}")
         
