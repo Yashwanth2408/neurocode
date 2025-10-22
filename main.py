@@ -1,14 +1,17 @@
 from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 import uvicorn
 import json
 from typing import Dict, Any
 import asyncio
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+import os
+
 from config import config
 from security_scanner import SecurityScanner
 from github_integration import GitHubIntegration
+
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -17,16 +20,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 # Global instances
 scanner = SecurityScanner()
+
 
 @app.get("/")
 async def root():
     """Redirect to frontend"""
     return RedirectResponse(url="/static/index.html")
+
 
 @app.get("/api/health")
 async def health():
@@ -42,18 +49,20 @@ async def health():
         }
     }
 
+
 @app.get("/health")
 async def health_check():
     """Detailed health check"""
     return {
         "status": "healthy",
-        "ai_model": config.ollama_model if scanner.ai_available else None,
+        "ai_model": getattr(config, 'ollama_model', None) if scanner.ai_available else None,
         "scanners_enabled": {
             "semgrep": config.enable_semgrep and scanner.semgrep_available,
             "bandit": config.enable_bandit and scanner.bandit_available,
             "codellama_ai": config.enable_ai_analysis and scanner.ai_available
         }
     }
+
 
 @app.post("/api/scan")
 async def scan_code(request: Request):
@@ -76,6 +85,7 @@ async def scan_code(request: Request):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/webhook/github")
 async def github_webhook(request: Request, background_tasks: BackgroundTasks):
@@ -127,6 +137,7 @@ async def github_webhook(request: Request, background_tasks: BackgroundTasks):
         raise HTTPException(status_code=400, detail="Invalid JSON payload")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 async def process_github_pr(pr_data: Dict[str, Any]):
     """Process GitHub PR security scan (background task)"""
@@ -197,6 +208,7 @@ async def process_github_pr(pr_data: Dict[str, Any]):
     except Exception as e:
         print(f"❌ Error processing PR: {e}")
 
+
 @app.post("/webhook/gitlab")
 async def gitlab_webhook(request: Request, background_tasks: BackgroundTasks):
     """GitLab webhook endpoint for merge request events"""
@@ -230,24 +242,31 @@ async def gitlab_webhook(request: Request, background_tasks: BackgroundTasks):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 def start_server():
-    """Start the FastAPI server"""
+    """Start the FastAPI server with Railway-compatible configuration"""
+    # Railway provides PORT environment variable
+    port = int(os.environ.get("PORT", config.api_port))
+    host = os.environ.get("HOST", config.api_host)
+    
     print("\n" + "="*60)
     print("🚀 Starting NeuroCode API Server")
     print("="*60)
-    print(f"📡 Host: {config.api_host}:{config.api_port}")
-    print(f"🤖 AI Model: {config.ollama_model if scanner.ai_available else 'Not configured'}")
+    print(f"📡 Host: {host}:{port}")
+    print(f"🌍 Environment: {'Production (Railway)' if os.environ.get('RAILWAY_ENVIRONMENT') else 'Development'}")
+    print(f"🤖 AI Model: {getattr(config, 'ollama_model', 'Not configured') if scanner.ai_available else 'Disabled'}")
     print(f"✅ Scanners: Semgrep={'✓' if config.enable_semgrep else '✗'}, "
           f"Bandit={'✓' if config.enable_bandit else '✗'}, "
-          f"CodeLlama AI={'✓' if config.enable_ai_analysis else '✗'}")
+          f"AI Analysis={'✓' if config.enable_ai_analysis else '✗'}")
     print("="*60 + "\n")
     
     uvicorn.run(
         app, 
-        host=config.api_host, 
-        port=config.api_port,
+        host=host, 
+        port=port,
         log_level="info"
     )
+
 
 if __name__ == "__main__":
     start_server()
