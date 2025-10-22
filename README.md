@@ -1,6 +1,14 @@
 # NeuroCode - Python Security Scanner
 
-A static application security testing (SAST) tool that analyzes Python code for security vulnerabilities using industry-standard scanning engines.
+# NeuroCode - Python Security Scanner
+
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://web-production-15a1.up.railway.app)
+[![Deployment](https://img.shields.io/badge/deployment-active-success)](https://railway.app)
+[![Platform](https://img.shields.io/badge/platform-Railway-blueviolet)](https://railway.app)
+
+**Live Demo:** [https://web-production-15a1.up.railway.app](https://web-production-15a1.up.railway.app)
+
+A static application security testing (SAST) tool that analyzes Python code for security vulnerabilities using industry-standard scanning engines (Semgrep and Bandit)
 
 ## Overview
 
