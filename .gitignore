@@ -7,10 +7,14 @@ __pycache__/
 venv/
 env/
 ENV/
+*.egg-info/
+dist/
+build/
 
 # Environment
 .env
 .env.local
+.env.production
 
 # Temporary files
 temp_scan.*
@@ -29,6 +33,9 @@ Thumbs.db
 # Logs
 *.log
 
-# Data folder (if you have test data)
+# Test data
 data/
+test_data/
 
+# Railway
+.railway/
