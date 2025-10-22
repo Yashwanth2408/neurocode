@@ -4,8 +4,9 @@ import uvicorn
 import json
 from typing import Dict, Any
 import asyncio
-
-from config import get_config
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
+from config import config
 from security_scanner import SecurityScanner
 from github_integration import GitHubIntegration
 
@@ -16,12 +17,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # Global instances
 scanner = SecurityScanner()
-config = get_config()
 
 @app.get("/")
 async def root():
+    """Redirect to frontend"""
+    return RedirectResponse(url="/static/index.html")
+
+@app.get("/api/health")
+async def health():
     """Health check endpoint"""
     return {
         "service": "NeuroCode Security Scanner",
@@ -30,7 +38,7 @@ async def root():
         "scanners": {
             "semgrep": scanner.semgrep_available,
             "bandit": scanner.bandit_available,
-            "codellama": True
+            "codellama_ai": scanner.ai_available
         }
     }
 
@@ -39,11 +47,11 @@ async def health_check():
     """Detailed health check"""
     return {
         "status": "healthy",
-        "ollama_model": config.ollama_model,
+        "ai_model": config.ollama_model if scanner.ai_available else None,
         "scanners_enabled": {
             "semgrep": config.enable_semgrep and scanner.semgrep_available,
             "bandit": config.enable_bandit and scanner.bandit_available,
-            "codellama": config.enable_codellama
+            "codellama_ai": config.enable_ai_analysis and scanner.ai_available
         }
     }
 
@@ -134,7 +142,7 @@ async def process_github_pr(pr_data: Dict[str, Any]):
         files = github.get_pr_files(pr_data["repo"], pr_data["pr_number"])
         print(f"📁 Found {len(files)} changed files")
         
-        # Filter files to scan (Python files only for now)
+        # Filter files to scan
         scannable_files = [
             f for f in files 
             if f["filename"].endswith((".py", ".js", ".ts", ".java", ".go"))
@@ -177,11 +185,10 @@ async def process_github_pr(pr_data: Dict[str, Any]):
         
         # Generate AI summary for all findings
         if all_results["total_issues"] > 0:
-            summary_prompt = f"Summarize these security findings: {all_results['total_issues']} total issues, {all_results['severity_breakdown']} severity breakdown."
             all_results["codellama_analysis"] = f"Scanned {len(scannable_files)} files with {all_results['total_issues']} issues found."
         
-        # Post comment on PR
-        if config.auto_comment_on_pr:
+        # Post comment on PR (if token is configured)
+        if config.github_token:
             comment = github.format_scan_results_comment(all_results, pr_data["pr_number"])
             github.post_pr_comment(pr_data["repo"], pr_data["pr_number"], comment)
         
@@ -228,20 +235,19 @@ def start_server():
     print("\n" + "="*60)
     print("🚀 Starting NeuroCode API Server")
     print("="*60)
-    print(f"📡 Host: {config.host}:{config.port}")
-    print(f"🤖 Ollama Model: {config.ollama_model}")
+    print(f"📡 Host: {config.api_host}:{config.api_port}")
+    print(f"🤖 AI Model: {config.ollama_model if scanner.ai_available else 'Not configured'}")
     print(f"✅ Scanners: Semgrep={'✓' if config.enable_semgrep else '✗'}, "
           f"Bandit={'✓' if config.enable_bandit else '✗'}, "
-          f"CodeLlama={'✓' if config.enable_codellama else '✗'}")
+          f"CodeLlama AI={'✓' if config.enable_ai_analysis else '✗'}")
     print("="*60 + "\n")
     
     uvicorn.run(
         app, 
-        host=config.host, 
-        port=config.port,
+        host=config.api_host, 
+        port=config.api_port,
         log_level="info"
     )
 
 if __name__ == "__main__":
     start_server()
-    

@@ -4,53 +4,31 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual Environment
 venv/
 env/
 ENV/
 
-# Environment Variables
+# Environment
 .env
+.env.local
+
+# Temporary files
+temp_scan.*
+*.tmp
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-*.cover
-
 # Logs
 *.log
 
-# Temporary files
-temp_scan.*
-*.tmp
+# Data folder (if you have test data)
+data/
 
-# Docker
-docker-compose.override.yml

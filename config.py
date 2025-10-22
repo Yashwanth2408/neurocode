@@ -1,56 +1,38 @@
 import os
 from typing import Optional
-from pydantic import BaseModel
+from dataclasses import dataclass
 
-class NeurocodeConfig(BaseModel):
-    """NeuroCode configuration settings"""
+
+@dataclass
+class Config:
+    """Configuration for NeuroCode Security Scanner"""
     
-    # API Settings
-    host: str = "0.0.0.0"
-    port: int = 8000
-    
-    # Ollama Settings
-    ollama_model: str = "codellama:7b-instruct"
-    ollama_host: str = "http://localhost:11434"
-    
-    # GitHub Settings
+    # GitHub Integration
     github_token: Optional[str] = os.getenv("GITHUB_TOKEN")
     github_webhook_secret: Optional[str] = os.getenv("GITHUB_WEBHOOK_SECRET")
     
-    # GitLab Settings
+    # GitLab Integration
     gitlab_token: Optional[str] = os.getenv("GITLAB_TOKEN")
     gitlab_url: str = os.getenv("GITLAB_URL", "https://gitlab.com")
     gitlab_webhook_secret: Optional[str] = os.getenv("GITLAB_WEBHOOK_SECRET")
     
+    # Ollama/CodeLlama AI Settings
+    ollama_model: str = os.getenv("OLLAMA_MODEL", "codellama:7b-instruct")
+    ollama_host: str = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+    
     # Scanner Settings
-    enable_semgrep: bool = True
-    enable_bandit: bool = True
-    enable_codellama: bool = True
+    enable_semgrep: bool = os.getenv("ENABLE_SEMGREP", "true").lower() == "true"
+    enable_bandit: bool = os.getenv("ENABLE_BANDIT", "true").lower() == "true"
+    enable_ai_analysis: bool = os.getenv("ENABLE_AI_ANALYSIS", "true").lower() == "true"
+    
+    # API Server Settings
+    api_host: str = os.getenv("API_HOST", "0.0.0.0")
+    api_port: int = int(os.getenv("API_PORT", "8000"))
     
     # Performance Settings
-    max_file_size_kb: int = 500  # Skip files larger than 500KB
-    max_files_per_pr: int = 50   # Limit analysis to 50 files per PR
-    scan_timeout_seconds: int = 300  # 5 minute timeout
-    
-    # Security Settings
-    min_severity_to_report: str = "low"  # Report low, medium, high
-    auto_comment_on_pr: bool = True
-    
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    max_file_size_kb: int = int(os.getenv("MAX_FILE_SIZE_KB", "500"))
+    max_files_per_pr: int = int(os.getenv("MAX_FILES_PER_PR", "50"))
+    scan_timeout_seconds: int = int(os.getenv("SCAN_TIMEOUT_SECONDS", "300"))
 
-# Global config instance
-config = NeurocodeConfig()
 
-def get_config() -> NeurocodeConfig:
-    """Get configuration instance"""
-    return config
-
-def update_config(**kwargs):
-    """Update configuration at runtime"""
-    global config
-    for key, value in kwargs.items():
-        if hasattr(config, key):
-            setattr(config, key, value)
-    return config
+config = Config()

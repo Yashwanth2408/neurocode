@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroCode - AI-Powered Security Scanner</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo-section">
+                <img src="/static/images/logo.png" alt="NeuroCode Logo" class="logo-icon">
+                <div class="logo-text">
+                    <span class="logo-name">NeuroCode</span>
+                    <span class="logo-tagline">AI Security Scanner</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#scanner" class="nav-link">Scanner</a>
+                <a href="https://github.com/yourusername/neurocode" target="_blank" class="nav-link">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-icon">🛡️</span>
+                    <span>Multi-Layer Security Analysis</span>
+                </div>
+                <h1 class="hero-title">
+                    Secure Your Code with
+                    <span class="gradient-text">AI-Powered Analysis</span>
+                </h1>
+                <p class="hero-description">
+                    NeuroCode combines Semgrep, Bandit, and CodeLlama AI to detect vulnerabilities 
+                    in your code instantly. Get comprehensive security reports in seconds.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Security Engines</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">8+</div>
+                        <div class="stat-label">Vulnerability Types</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Free & Open Source</div>
+                    </div>
+                </div>
+                
+                <a href="#scanner" class="cta-button">
+                    <span>Start Scanning</span>
+                    <i class="fas fa-arrow-down"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Powered by Advanced Security Tools</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Semgrep Analysis</h3>
+                    <p>Industry-standard static analysis for detecting security vulnerabilities and anti-patterns</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <h3>Bandit Scanner</h3>
+                    <p>Python-specific security linter that finds common security issues in Python code</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>CodeLlama AI</h3>
+                    <p>Advanced AI model trained on code that provides intelligent security recommendations</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>GitHub Integration</h3>
+                    <p>Automatically scan pull requests and comment with security findings</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scanner Section -->
+    <section id="scanner" class="scanner">
+        <div class="container">
+            <div class="scanner-card">
+                <div class="scanner-header">
+                    <h2>Try It Now - Live Scanner</h2>
+                    <p>Paste your code below and get instant security analysis</p>
+                </div>
+                
+                <div class="scanner-controls">
+                    <div class="language-badge">
+                        <i class="fab fa-python"></i>
+                        <span>Python Security Scanner</span>
+                    </div>
+                    <button id="scanBtn" class="scan-button">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Scan Python Code</span>
+                    </button>
+                </div>  
+
+                <textarea id="codeInput" class="code-input" placeholder="# Paste your code here
+# Example: Python code with potential SQL injection
+
+from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route('/user')
+def get_user():
+    user_id = request.args.get('id')
+    query = 'SELECT * FROM users WHERE id = ' + user_id
+    return execute_query(query)"></textarea>
+
+                <div id="resultsSection" class="results-section" style="display: none;">
+                    <div class="results-header">
+                        <h3>Security Scan Results</h3>
+                        <div id="scanSummary" class="scan-summary"></div>
+                    </div>
+                    <div id="resultsContent" class="results-content"></div>
+                </div>
+
+                <div id="loadingSection" class="loading-section" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing your code...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="/static/images/logo.png" alt="NeuroCode" style="width: 30px; height: 30px;">
+                        <span>NeuroCode</span>
+                    </div>
+                    <p>AI-powered security scanner for modern applications</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <a href="#">Documentation</a>
+                    <a href="#">API Reference</a>
+                    <a href="#">GitHub</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Built With</h4>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Python</span>
+                        <span class="tech-badge">FastAPI</span>
+                        <span class="tech-badge">Ollama</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 NeuroCode. Open Source Project by Yash</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

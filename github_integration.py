@@ -1,7 +1,7 @@
 from github import Github, GithubException
 from typing import List, Dict, Optional
 import json
-from config import get_config
+from config import config
 
 class GitHubIntegration:
     """Handle GitHub API operations for PR reviews"""
